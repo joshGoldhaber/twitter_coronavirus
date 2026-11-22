@@ -131,3 +131,7 @@ dmypy.json
 # vim
 *.swo 
 *.swp
+
+# map/reduce outputs
+outputs/
+logs/

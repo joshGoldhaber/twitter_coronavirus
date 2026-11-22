@@ -1,5 +1,6 @@
 import zipfile, json, sys
 import itertools
+import os
 from collections import Counter
 from collections import defaultdict
 
@@ -7,11 +8,16 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("filename")
 parser.add_argument("--numdp", type=int)
+parser.add_argument("--output_folder", default="outputs")
 args = parser.parse_args()
 
 # load from file
-hashtags = ['parola', 'para']
+with open("hashtags") as hf:
+    hashtags = [h.strip().lower() for h in hf if h.strip()]
+
+# counters keyed by hashtag first: lang_counter[hashtag][lang]
 lang_counter = defaultdict(lambda: Counter())
+country_counter = defaultdict(lambda: Counter())
 
 print(f"args.filename={args.filename}")
 
@@ -20,16 +26,23 @@ with zipfile.ZipFile(args.filename) as z:
         print('name=', name)
         with z.open(name) as f:
             for i, line in itertools.islice(enumerate(f), args.numdp):
-                print(f"i={i}")
                 data = json.loads(line)
-                text = data['text']
-                #print(f"text={text}")
-                lang = data['lang']
-                counter = lang_counter[lang]
+                text = data['text'].lower()
+                lang = data.get('lang')
+                place = data.get('place') or {}
+                country = place.get('country_code')
                 for hashtag in hashtags:
                     if hashtag in text:
-                        counter[hashtag] += 1
+                        lang_counter[hashtag][lang] += 1
+                        country_counter[hashtag][country] += 1
+                lang_counter['_all'][lang] += 1
+                country_counter['_all'][country] += 1
 
 
-# need two counters, one for languaes and one for countries
-print(f"lang_counter={lang_counter}")
+os.makedirs(args.output_folder, exist_ok=True)
+output_path_base = os.path.join(args.output_folder, os.path.basename(args.filename))
+with open(output_path_base + '.lang', 'w') as f:
+    json.dump(lang_counter, f)
+with open(output_path_base + '.country', 'w') as f:
+    json.dump(country_counter, f)
+print(f"wrote {output_path_base}.lang and {output_path_base}.country")
