@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# command line args
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_path',required=True)
@@ -9,7 +8,6 @@ parser.add_argument('--percent',action='store_true')
 parser.add_argument('--output_path', help='png path (default: derived from input_path and key)')
 args = parser.parse_args()
 
-# imports
 import os
 import json
 from collections import Counter,defaultdict
@@ -19,24 +17,19 @@ logging.getLogger('matplotlib.font_manager').setLevel(logging.ERROR)
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-# fall back to a CJK font so hashtags like #코로나바이러스 render correctly
 plt.rcParams['font.family'] = ['DejaVu Sans', 'WenQuanYi Zen Hei']
 
-# open the input path
 with open(args.input_path) as f:
     counts = json.load(f)
 
-# normalize the counts by the total values
 if args.percent:
     for k in counts[args.key]:
         counts[args.key][k] /= counts['_all'][k]
 
-# print the count values
 items = sorted(counts[args.key].items(), key=lambda item: (item[1],item[0]), reverse=True)
 for k,v in items:
     print(k,':',v)
 
-# plot the top 10 keys, sorted from low to high
 top = sorted(items[:10], key=lambda item: item[1])
 keys = ['unknown' if k == 'null' else k for k, _ in top]
 values = [v for _, v in top]
