@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 '''
 Plot daily usage of hashtags over 2020.
 
