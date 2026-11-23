@@ -27,7 +27,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 plt.rcParams['font.family'] = ['DejaVu Sans', 'WenQuanYi Zen Hei']
 
-# scan: build dataset[hashtag][date] = number of tweets that day
 dataset = defaultdict(dict)
 pattern = re.compile(r'geoTwitter(\d\d)-(\d\d)-(\d\d)\.zip\.lang$')
 for name in sorted(os.listdir(args.input_folder)):
