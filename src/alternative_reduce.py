@@ -1,10 +1,3 @@
-'''
-Plot daily usage of hashtags over 2020.
-
-Scans every per-day output of map.py in the outputs folder, builds a
-{hashtag: {date: count}} dataset, then draws one line per hashtag.
-'''
-
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('hashtags', nargs='+')

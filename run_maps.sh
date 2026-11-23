@@ -1,5 +1,4 @@
 #!/bin/sh
-# Run map.py on every day of 2020 in parallel; each job survives logout via nohup.
 mkdir -p outputs logs
 for file in '/data/Twitter dataset/'geoTwitter20-*.zip; do
     name=$(basename "$file")
